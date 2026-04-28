@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemap (dominio real)
+Sitemap: https://el-dominio.com/sitemap.xml
