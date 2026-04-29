@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - ICTAM WebApp</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-white to-indigo-50 min-h-screen">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="relative z-10 bg-white/80 backdrop-blur-md border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="/" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-building text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">ICTAM</h2>
+                        <span class="text-xs text-blue-600 font-medium">WebApp</span>
+                    </div>
+                </a>
+                <a href="/" class="text-gray-600 hover:text-blue-600 transition-colors">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Volver al inicio
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="relative z-10 flex items-center justify-center px-4 py-12">
+        <div class="w-full max-w-md">
+            <!-- Login Card -->
+            <div class="bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden">
+                <!-- Header -->
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-10 text-center">
+                    <div class="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-6 backdrop-blur-sm">
+                        <i class="fas fa-user-shield text-white text-2xl"></i>
+                    </div>
+                    <h1 class="text-3xl font-bold text-white mb-2">Bienvenido</h1>
+                    <p class="text-blue-100">Accede a tu panel de control profesional</p>
+                </div>
+
+                <!-- Form -->
+                <div class="px-8 py-10">
+                    <form id="loginForm" class="space-y-6">
+                        <!-- Email Field -->
+                        <div class="space-y-2">
+                            <label for="email" class="block text-sm font-semibold text-gray-700">
+                                Correo Electrónico
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center">
+                                    <i class="fas fa-envelope text-gray-400"></i>
+                                </div>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    name="email" 
+                                    required 
+                                    placeholder="admin@ictam.com"
+                                    class="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 text-gray-900 placeholder-gray-500"
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="space-y-2">
+                            <label for="password" class="block text-sm font-semibold text-gray-700">
+                                Contraseña
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center">
+                                    <i class="fas fa-lock text-gray-400"></i>
+                                </div>
+                                <input 
+                                    type="password" 
+                                    id="password" 
+                                    name="password" 
+                                    required 
+                                    placeholder="admin123"
+                                    class="w-full pl-12 pr-12 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 text-gray-900 placeholder-gray-500"
+                                >
+                                <button 
+                                    type="button" 
+                                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                                    onclick="togglePassword()"
+                                >
+                                    <i class="fas fa-eye" id="passwordToggleIcon"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Options -->
+                        <div class="flex items-center justify-between">
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="checkbox" id="remember" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                <span class="text-sm text-gray-700">Recordarme</span>
+                            </label>
+                            <a href="#forgot" class="text-sm text-blue-600 hover:text-blue-700 transition-colors font-medium">
+                                ¿Olvidaste tu contraseña?
+                            </a>
+                        </div>
+
+                        <!-- Login Button -->
+                        <button 
+                            type="submit" 
+                            id="loginBtn"
+                            class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center space-x-3"
+                        >
+                            <span class="btn-text">Iniciar Sesión</span>
+                            <span class="btn-loader hidden">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </span>
+                        </button>
+                    </form>
+
+                    <!-- Demo Credentials -->
+                    <div class="mt-8 p-6 bg-gray-50 rounded-2xl border border-gray-200">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-4 flex items-center">
+                            <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                            Credenciales de Demostración
+                        </h3>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between items-center p-3 bg-white rounded-lg border">
+                                <div>
+                                    <p class="font-medium text-gray-900">Administrador</p>
+                                    <p class="text-gray-600">admin@ictam.com / admin123</p>
+                                </div>
+                                <button 
+                                    class="text-blue-600 hover:text-blue-700 transition-colors"
+                                    onclick="fillCredentials('admin@ictam.com', 'admin123')"
+                                >
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-white rounded-lg border">
+                                <div>
+                                    <p class="font-medium text-gray-900">Cliente</p>
+                                    <p class="text-gray-600">juan.perez@email.com / cliente123</p>
+                                </div>
+                                <button 
+                                    class="text-blue-600 hover:text-blue-700 transition-colors"
+                                    onclick="fillCredentials('juan.perez@email.com', 'cliente123')"
+                                >
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Register Link -->
+                    <div class="mt-8 text-center">
+                        <p class="text-gray-600">
+                            ¿No tienes cuenta? 
+                            <a href="#register" class="text-blue-600 hover:text-blue-700 font-semibold transition-colors">
+                                Regístrate aquí
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+                <div class="bg-white/50 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shield-alt text-blue-600"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Seguro</h3>
+                    <p class="text-sm text-gray-600">Autenticación JWT y datos encriptados</p>
+                </div>
+                
+                <div class="bg-white/50 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-bolt text-green-600"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Rápido</h3>
+                    <p class="text-sm text-gray-600">Acceso instantáneo a tu dashboard</p>
+                </div>
+                
+                <div class="bg-white/50 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-mobile-alt text-purple-600"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Responsive</h3>
+                    <p class="text-sm text-gray-600">Funciona en todos los dispositivos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification" class="fixed top-4 right-4 z-50 hidden">
+        <div class="bg-white border border-gray-200 rounded-xl shadow-lg p-4 max-w-sm">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i id="notificationIcon" class="text-xl"></i>
+                </div>
+                <div class="ml-3">
+                    <p id="notificationMessage" class="text-sm font-medium text-gray-900"></p>
+                </div>
+                <div class="ml-auto pl-3">
+                    <button onclick="hideNotification()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/auth.js"></script>
+    <script>
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('passwordToggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Fill demo credentials
+        function fillCredentials(email, password) {
+            document.getElementById('email').value = email;
+            document.getElementById('password').value = password;
+            
+            // Show notification
+            showNotification('Credenciales copiadas', 'success');
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            const icon = document.getElementById('notificationIcon');
+            const messageEl = document.getElementById('notificationMessage');
+            
+            messageEl.textContent = message;
+            
+            // Set icon based on type
+            icon.className = 'text-xl ';
+            if (type === 'success') {
+                icon.className += 'fas fa-check-circle text-green-500';
+            } else if (type === 'error') {
+                icon.className += 'fas fa-exclamation-circle text-red-500';
+            } else {
+                icon.className += 'fas fa-info-circle text-blue-500';
+            }
+            
+            notification.classList.remove('hidden');
+            
+            // Auto hide after 3 seconds
+            setTimeout(() => {
+                hideNotification();
+            }, 3000);
+        }
+
+        // Hide notification
+        function hideNotification() {
+            document.getElementById('notification').classList.add('hidden');
+        }
+
+        // Initialize auth manager when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof AuthManager !== 'undefined') {
+                new AuthManager();
+            }
+        });
+    </script>
+</body>
+</html>
+
+                <button type="submit" class="btn btn-primary btn-full" id="registerBtn">
+                    <span class="btn-text">Crear Cuenta</span>
+                    <span class="btn-loader" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </span>
+                </button>
+
+                <div class="auth-divider">
+                    <span>o</span>
+                </div>
+
+                <p class="auth-switch">
+                    ¿Ya tienes cuenta? <a href="#login" onclick="showLogin()">Inicia sesión aquí</a>
+                </p>
+            </form>
+        </div>
+
+        <div class="auth-sidebar">
+            <div class="sidebar-content">
+                <h2>Bienvenido a ICTAM WebApp</h2>
+                <p>La plataforma integral para gestión de proyectos de construcción y arquitectura.</p>
+                
+                <div class="sidebar-features">
+                    <div class="sidebar-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Gestión completa de proyectos</span>
+                    </div>
+                    <div class="sidebar-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Colaboración en tiempo real</span>
+                    </div>
+                    <div class="sidebar-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Reportes y analytics avanzados</span>
+                    </div>
+                    <div class="sidebar-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Seguridad empresarial</span>
+                    </div>
+                </div>
+
+                <div class="demo-accounts">
+                    <h4>Cuentas de Demostración</h4>
+                    <div class="demo-account">
+                        <strong>Administrador:</strong><br>
+                        <code>admin@ictam.com</code><br>
+                        <code>admin123</code>
+                    </div>
+                    <div class="demo-account">
+                        <strong>Cliente:</strong><br>
+                        <code>juan.perez@email.com</code><br>
+                        <code>cliente123</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification-container"></div>
+
+    <script src="/js/auth.js"></script>
+    <script>
+        // Funciones para alternar entre login y registro
+        function showRegister() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+            document.querySelector('.auth-header h1').textContent = 'Crear Cuenta';
+            document.querySelector('.auth-header p').textContent = 'Únete a nuestra plataforma';
+        }
+
+        function showLogin() {
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+            document.querySelector('.auth-header h1').textContent = 'Iniciar Sesión';
+            document.querySelector('.auth-header p').textContent = 'Accede a tu panel de control';
+        }
+
+        // Función para mostrar/ocultar contraseña
+        function togglePassword(inputId = 'password') {
+            const input = document.getElementById(inputId);
+            const icon = input.parentNode.querySelector('.password-toggle i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
+    </script>
+</body>
+</html>

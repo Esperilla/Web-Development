@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Proyecto - ICTAM WebApp</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Custom animations and effects */
+        .stat-card { 
+            transition: all 0.3s ease; 
+            animation: slideInUp 0.6s ease forwards;
+        }
+        .stat-card:hover { transform: translateY(-4px); }
+        .stat-card:nth-child(2) { animation-delay: 0.1s; }
+        .stat-card:nth-child(3) { animation-delay: 0.2s; }
+        .stat-card:nth-child(4) { animation-delay: 0.3s; }
+        .tab-content { animation: fadeIn 0.3s ease; }
+        .service-card { transition: all 0.3s ease; }
+        .service-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-building text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">ICTAM</h2>
+                        <span class="text-xs text-gray-500">WebApp</span>
+                    </div>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-500 hover:text-gray-700 focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Desktop menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Inicio</a>
+                    <a href="/projects" class="text-blue-600 font-medium">Proyectos</a>
+                    <a href="/dashboard" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Dashboard</a>
+                    <div class="flex items-center space-x-3">
+                        <a href="/login" class="text-gray-700 hover:text-blue-600 font-medium transition-colors" id="loginLink">Iniciar Sesión</a>
+                        <button class="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all font-medium text-sm hidden" id="logoutBtn">
+                            Cerrar Sesión
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-200">
+            <div class="px-4 py-2 space-y-1">
+                <a href="/" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">Inicio</a>
+                <a href="/projects" class="block px-3 py-2 text-blue-600 bg-blue-50 rounded-lg">Proyectos</a>
+                <a href="/dashboard" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">Dashboard</a>
+                <a href="/login" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg" id="loginLinkMobile">Iniciar Sesión</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="pt-16 min-h-screen">
+        <!-- Loading State -->
+        <div id="loadingState" class="flex justify-center items-center py-20">
+            <div class="text-center">
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-blue-600 mb-4"></div>
+                <p class="text-gray-600 font-medium">Cargando proyecto...</p>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div id="errorState" class="text-center py-20" style="display: none;">
+            <div class="max-w-md mx-auto bg-white rounded-xl shadow-lg p-8">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-exclamation-triangle text-red-500 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Error cargando proyecto</h3>
+                <p class="text-gray-600 mb-6" id="errorMessage">No se pudo cargar la información del proyecto.</p>
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <button onclick="location.reload()" class="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all font-medium">
+                        <i class="fas fa-redo mr-2"></i>
+                        Reintentar
+                    </button>
+                    <a href="/projects" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Volver a proyectos
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Content -->
+        <div id="projectContent" style="display: none;">
+            <!-- Breadcrumb -->
+            <div class="bg-white/80 backdrop-blur-sm border-b border-gray-200">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                    <nav class="flex items-center space-x-2 text-sm">
+                        <a href="/" class="text-gray-500 hover:text-blue-600 transition-colors">Inicio</a>
+                        <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
+                        <a href="/projects" class="text-gray-500 hover:text-blue-600 transition-colors">Proyectos</a>
+                        <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
+                        <span class="text-gray-900 font-medium" id="breadcrumbProjectName">Proyecto</span>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Project Header -->
+            <div class="bg-white shadow-sm">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+                        <div class="flex-1">
+                            <div class="flex flex-col sm:flex-row sm:items-start gap-4 mb-4">
+                                <div class="flex-1">
+                                    <h1 class="text-3xl font-bold text-gray-900 mb-2" id="projectName">
+                                        Cargando...
+                                    </h1>
+                                    <div class="flex flex-wrap items-center gap-2 mb-4">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium" id="projectStatus"></span>
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium" id="projectPriority"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 mb-6 text-lg leading-relaxed" id="projectDescription">
+                                Descripción del proyecto...
+                            </p>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+                                <div class="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
+                                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-user text-blue-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500">Cliente</p>
+                                        <p class="font-semibold text-gray-900" id="projectClient">-</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
+                                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-user-tie text-green-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500">Responsable</p>
+                                        <p class="font-semibold text-gray-900" id="projectResponsible">-</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
+                                    <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-calendar text-purple-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500">Creado</p>
+                                        <p class="font-semibold text-gray-900" id="projectCreated">-</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <button class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium" id="editProjectBtn">
+                                <i class="fas fa-edit mr-2"></i>
+                                Editar
+                            </button>
+                            <button class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all font-medium shadow-sm" id="addServiceBtn">
+                                <i class="fas fa-plus mr-2"></i>
+                                Agregar Servicio
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Stats -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="stat-card bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-blue-100">
+                                <i class="fas fa-chart-line text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <div class="text-2xl font-bold text-gray-900 mb-1" id="projectProgress">0%</div>
+                                <div class="text-sm text-gray-500 mb-2">Progreso General</div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-300" id="progressBar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-100">
+                                <i class="fas fa-dollar-sign text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <div class="text-2xl font-bold text-gray-900 mb-1" id="projectBudget">$0</div>
+                                <div class="text-sm text-gray-500 mb-1">Presupuesto</div>
+                                <div class="text-xs text-gray-400">
+                                    Gastado: <span class="font-medium" id="currentCost">$0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-purple-100">
+                                <i class="fas fa-cogs text-purple-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <div class="text-2xl font-bold text-gray-900 mb-1" id="totalServices">0</div>
+                                <div class="text-sm text-gray-500 mb-1">Servicios</div>
+                                <div class="text-xs text-gray-400">
+                                    Completados: <span class="font-medium" id="completedServices">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-orange-100">
+                                <i class="fas fa-clock text-orange-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <div class="text-2xl font-bold text-gray-900 mb-1" id="daysRemaining">-</div>
+                                <div class="text-sm text-gray-500 mb-1">Días Restantes</div>
+                                <div class="text-xs text-gray-400" id="deadline">
+                                    Fecha límite: -
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="border-b border-gray-200">
+                        <nav class="flex overflow-x-auto">
+                            <button class="tab-button active flex items-center px-6 py-4 border-b-2 border-blue-600 text-blue-600 font-medium text-sm whitespace-nowrap" data-tab="services">
+                                <i class="fas fa-cogs mr-2"></i>
+                                Servicios
+                            </button>
+                            <button class="tab-button flex items-center px-6 py-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-sm whitespace-nowrap" data-tab="tasks">
+                                <i class="fas fa-tasks mr-2"></i>
+                                Tareas
+                            </button>
+                            <button class="tab-button flex items-center px-6 py-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-sm whitespace-nowrap" data-tab="documents">
+                                <i class="fas fa-file-alt mr-2"></i>
+                                Documentos
+                            </button>
+                            <button class="tab-button flex items-center px-6 py-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-sm whitespace-nowrap" data-tab="timeline">
+                                <i class="fas fa-history mr-2"></i>
+                                Cronología
+                            </button>
+                        </nav>
+                    </div>
+
+                    <!-- Tab Content -->
+                    <div class="p-6">
+                        <!-- Services Tab -->
+                        <div id="servicesTab" class="tab-content">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900">Servicios del Proyecto</h3>
+                                <button class="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all font-medium text-sm shadow-sm" id="addServiceBtnTab">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Nuevo Servicio
+                                </button>
+                            </div>
+                            <div id="servicesList" class="space-y-4">
+                                <!-- Los servicios se cargarán dinámicamente -->
+                                <div class="text-center py-12">
+                                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <i class="fas fa-cogs text-gray-400 text-2xl"></i>
+                                    </div>
+                                    <h4 class="text-lg font-medium text-gray-900 mb-2">No hay servicios asignados</h4>
+                                    <p class="text-gray-500 mb-4">Agrega servicios para comenzar a gestionar este proyecto.</p>
+                                    <button class="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all font-medium text-sm">
+                                        <i class="fas fa-plus mr-2"></i>
+                                        Agregar primer servicio
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tasks Tab -->
+                        <div id="tasksTab" class="tab-content" style="display: none;">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900">Tareas del Proyecto</h3>
+                                <button class="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 transition-all font-medium text-sm shadow-sm" id="addTaskBtn">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Nueva Tarea
+                                </button>
+                            </div>
+                            <div id="tasksList" class="space-y-4">
+                                <!-- Las tareas se cargarán dinámicamente -->
+                                <div class="text-center py-12">
+                                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <i class="fas fa-tasks text-gray-400 text-2xl"></i>
+                                    </div>
+                                    <h4 class="text-lg font-medium text-gray-900 mb-2">No hay tareas asignadas</h4>
+                                    <p class="text-gray-500 mb-4">Crea tareas para organizar mejor el trabajo del proyecto.</p>
+                                    <button class="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 transition-all font-medium text-sm">
+                                        <i class="fas fa-plus mr-2"></i>
+                                        Crear primera tarea
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Documents Tab -->
+                        <div id="documentsTab" class="tab-content" style="display: none;">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                                <h3 class="text-lg font-semibold text-gray-900">Documentos del Proyecto</h3>
+                                <button class="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all font-medium text-sm shadow-sm" id="uploadDocBtn">
+                                    <i class="fas fa-upload mr-2"></i>
+                                    Subir Documento
+                                </button>
+                            </div>
+                            <div id="documentsList" class="space-y-4">
+                                <!-- Los documentos se cargarán dinámicamente -->
+                                <div class="text-center py-12">
+                                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <i class="fas fa-file-alt text-gray-400 text-2xl"></i>
+                                    </div>
+                                    <h4 class="text-lg font-medium text-gray-900 mb-2">No hay documentos subidos</h4>
+                                    <p class="text-gray-500 mb-4">Sube documentos importantes relacionados con este proyecto.</p>
+                                    <button class="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all font-medium text-sm">
+                                        <i class="fas fa-upload mr-2"></i>
+                                        Subir primer documento
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Timeline Tab -->
+                        <div id="timelineTab" class="tab-content" style="display: none;">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-6">Cronología del Proyecto</h3>
+                            <div id="timelineList" class="space-y-6">
+                                <!-- La cronología se cargará dinámicamente -->
+                                <div class="text-center py-12">
+                                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <i class="fas fa-history text-gray-400 text-2xl"></i>
+                                    </div>
+                                    <h4 class="text-lg font-medium text-gray-900 mb-2">No hay actividad registrada</h4>
+                                    <p class="text-gray-500">La actividad del proyecto aparecerá aquí una vez que comiences a trabajar en él.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center space-x-2 mb-4">
+                    <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-building text-white text-sm"></i>
+                    </div>
+                    <span class="font-semibold text-gray-900">ICTAM WebApp</span>
+                </div>
+                <p class="text-gray-500 text-sm">&copy; 2025 ICTAM WebApp. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/js/auth.js"></script>
+    <script>
+        // Mobile menu functionality
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Project Detail Page functionality
+        class ProjectDetailPage {
+            constructor() {
+                this.authManager = new AuthManager();
+                this.projectId = this.getProjectIdFromUrl();
+                this.project = null;
+                this.activeTab = 'services';
+                this.init();
+            }
+
+            async init() {
+                await this.authManager.init();
+                this.setupEventListeners();
+                this.loadProject();
+            }
+
+            getProjectIdFromUrl() {
+                const pathParts = window.location.pathname.split('/');
+                return pathParts[pathParts.length - 1];
+            }
+
+            setupEventListeners() {
+                // Tabs
+                document.querySelectorAll('.tab-button').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const tabName = e.target.closest('.tab-button').dataset.tab;
+                        this.switchTab(tabName);
+                    });
+                });
+
+                // Botones
+                document.getElementById('editProjectBtn').addEventListener('click', 
+                    () => this.editProject());
+                document.getElementById('addServiceBtn').addEventListener('click', 
+                    () => this.addService());
+                document.getElementById('addServiceBtnTab').addEventListener('click', 
+                    () => this.addService());
+            }
+
+            async loadProject() {
+                try {
+                    this.showLoading(true);
+
+                    const response = await fetch(`/api/projects/${this.projectId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.authManager.token}`
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        this.project = result.data;
+                        this.renderProject();
+                        this.loadTabContent();
+                    } else {
+                        this.showError(result.message);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    this.showError('Error conectando con el servidor');
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            renderProject() {
+                // Actualizar título de página
+                document.title = `${this.project.nombre} - ICTAM WebApp`;
+
+                // Breadcrumb
+                document.getElementById('breadcrumbProjectName').textContent = this.project.nombre;
+
+                // Header
+                document.getElementById('projectName').textContent = this.project.nombre;
+                document.getElementById('projectDescription').textContent = 
+                    this.project.descripcion || 'Sin descripción disponible';
+
+                // Estado y prioridad
+                const statusBadge = document.getElementById('projectStatus');
+                statusBadge.textContent = this.getStatusText(this.project.estado);
+                statusBadge.className = `inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${this.getStatusClass(this.project.estado)}`;
+
+                const priorityBadge = document.getElementById('projectPriority');
+                priorityBadge.textContent = this.getPriorityText(this.project.prioridad);
+                priorityBadge.className = `inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${this.getPriorityClass(this.project.prioridad)}`;
+
+                // Información adicional
+                document.getElementById('projectClient').textContent = 
+                    this.project.cliente_nombre || 'No asignado';
+                document.getElementById('projectResponsible').textContent = 
+                    this.project.responsable_nombre || 'No asignado';
+                document.getElementById('projectCreated').textContent = 
+                    new Date(this.project.created_at).toLocaleDateString();
+
+                // Estadísticas
+                document.getElementById('projectProgress').textContent = `${this.project.progreso}%`;
+                document.getElementById('progressBar').style.width = `${this.project.progreso}%`;
+                document.getElementById('projectBudget').textContent = 
+                    this.project.presupuesto ? `$${this.project.presupuesto.toLocaleString()}` : 'No definido';
+                document.getElementById('currentCost').textContent = 
+                    this.project.costo_actual ? `$${this.project.costo_actual.toLocaleString()}` : '$0';
+                document.getElementById('totalServices').textContent = this.project.total_servicios || 0;
+                document.getElementById('completedServices').textContent = this.project.servicios_completados || 0;
+
+                // Días restantes
+                if (this.project.fecha_fin_estimada) {
+                    const deadline = new Date(this.project.fecha_fin_estimada);
+                    const today = new Date();
+                    const diffTime = deadline - today;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    document.getElementById('daysRemaining').textContent = diffDays > 0 ? diffDays : 'Vencido';
+                    document.getElementById('deadline').textContent = `Fecha límite: ${deadline.toLocaleDateString()}`;
+                } else {
+                    document.getElementById('daysRemaining').textContent = 'N/A';
+                    document.getElementById('deadline').textContent = 'Sin fecha límite';
+                }
+            }
+
+            switchTab(tabName) {
+                // Actualizar botones
+                document.querySelectorAll('.tab-button').forEach(button => {
+                    button.classList.remove('border-blue-600', 'text-blue-600');
+                    button.classList.add('border-transparent', 'text-gray-500');
+                });
+
+                const activeButton = document.querySelector(`[data-tab="${tabName}"]`);
+                activeButton.classList.add('border-blue-600', 'text-blue-600');
+                activeButton.classList.remove('border-transparent', 'text-gray-500');
+
+                // Mostrar/ocultar contenido
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.style.display = 'none';
+                });
+
+                document.getElementById(`${tabName}Tab`).style.display = 'block';
+                this.activeTab = tabName;
+
+                // Cargar contenido si es necesario
+                this.loadTabContent();
+            }
+
+            loadTabContent() {
+                switch (this.activeTab) {
+                    case 'services':
+                        this.loadServices();
+                        break;
+                    case 'tasks':
+                        this.loadTasks();
+                        break;
+                    case 'documents':
+                        this.loadDocuments();
+                        break;
+                    case 'timeline':
+                        this.loadTimeline();
+                        break;
+                }
+            }
+
+            async loadServices() {
+                // Implementar carga de servicios
+                console.log('Loading services for project:', this.projectId);
+            }
+
+            async loadTasks() {
+                // Implementar carga de tareas
+                console.log('Loading tasks for project:', this.projectId);
+            }
+
+            async loadDocuments() {
+                // Implementar carga de documentos
+                console.log('Loading documents for project:', this.projectId);
+            }
+
+            async loadTimeline() {
+                // Implementar carga de cronología
+                console.log('Loading timeline for project:', this.projectId);
+            }
+
+            // Utility methods
+            getStatusText(status) {
+                const statusMap = {
+                    'planificacion': 'Planificación',
+                    'en_proceso': 'En Proceso',
+                    'pausado': 'Pausado',
+                    'completado': 'Completado',
+                    'cancelado': 'Cancelado'
+                };
+                return statusMap[status] || status;
+            }
+
+            getStatusClass(status) {
+                const classMap = {
+                    'planificacion': 'bg-gray-100 text-gray-800',
+                    'en_proceso': 'bg-blue-100 text-blue-800',
+                    'pausado': 'bg-yellow-100 text-yellow-800',
+                    'completado': 'bg-green-100 text-green-800',
+                    'cancelado': 'bg-red-100 text-red-800'
+                };
+                return classMap[status] || 'bg-gray-100 text-gray-800';
+            }
+
+            getPriorityText(priority) {
+                const priorityMap = {
+                    'baja': 'Baja',
+                    'media': 'Media',
+                    'alta': 'Alta',
+                    'urgente': 'Urgente'
+                };
+                return priorityMap[priority] || priority;
+            }
+
+            getPriorityClass(priority) {
+                const classMap = {
+                    'baja': 'bg-gray-100 text-gray-800',
+                    'media': 'bg-blue-100 text-blue-800',
+                    'alta': 'bg-orange-100 text-orange-800',
+                    'urgente': 'bg-red-100 text-red-800'
+                };
+                return classMap[priority] || 'bg-gray-100 text-gray-800';
+            }
+
+            showLoading(show) {
+                document.getElementById('loadingState').style.display = show ? 'flex' : 'none';
+                document.getElementById('projectContent').style.display = show ? 'none' : 'block';
+                document.getElementById('errorState').style.display = 'none';
+            }
+
+            showError(message) {
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('projectContent').style.display = 'none';
+                document.getElementById('errorState').style.display = 'block';
+                document.getElementById('errorMessage').textContent = message;
+            }
+
+            editProject() {
+                console.log('Edit project:', this.projectId);
+                // Implementar edición de proyecto
+            }
+
+            addService() {
+                console.log('Add service to project:', this.projectId);
+                // Implementar agregar servicio
+            }
+        }
+
+        // Inicializar la página cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', () => {
+            new ProjectDetailPage();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyectos - ICTAM WebApp</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="navbar fixed top-0 w-full z-50">
+        <div class="nav-container flex items-center justify-between h-16">
+            <div class="nav-logo">
+                <a href="/" class="flex items-center space-x-2">
+                    <h2 class="text-2xl font-bold text-primary-600">ICTAM</h2>
+                    <span class="text-sm text-secondary-500">WebApp</span>
+                </a>
+            </div>
+            <div class="nav-menu">
+                <a href="/" class="nav-link">Inicio</a>
+                <a href="/projects" class="nav-link active">Proyectos</a>
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/login" class="nav-link" id="loginLink">Iniciar Sesión</a>
+                <button class="btn btn-secondary" id="logoutBtn" style="display: none;">
+                    Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="pt-16 min-h-screen">
+        <!-- Header -->
+        <div class="bg-white border-b border-secondary-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-secondary-900">Proyectos</h1>
+                        <p class="mt-2 text-secondary-600">Gestiona y supervisa todos los proyectos de ICTAM</p>
+                    </div>
+                    <button class="btn btn-primary" id="newProjectBtn">
+                        <i class="fas fa-plus mr-2"></i>
+                        Nuevo Proyecto
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="bg-white rounded-lg shadow-sm border border-secondary-200 p-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="label mb-2">Buscar proyectos</label>
+                        <input type="text" id="searchInput" class="input" placeholder="Nombre del proyecto...">
+                    </div>
+                    <div>
+                        <label class="label mb-2">Estado</label>
+                        <select id="statusFilter" class="input">
+                            <option value="">Todos los estados</option>
+                            <option value="planificacion">Planificación</option>
+                            <option value="en_proceso">En Proceso</option>
+                            <option value="pausado">Pausado</option>
+                            <option value="completado">Completado</option>
+                            <option value="cancelado">Cancelado</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="label mb-2">Prioridad</label>
+                        <select id="priorityFilter" class="input">
+                            <option value="">Todas las prioridades</option>
+                            <option value="baja">Baja</option>
+                            <option value="media">Media</option>
+                            <option value="alta">Alta</option>
+                            <option value="urgente">Urgente</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button class="btn btn-outline w-full" id="clearFilters">
+                            <i class="fas fa-times mr-2"></i>
+                            Limpiar filtros
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects Grid -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+            <div id="loadingSpinner" class="flex justify-center items-center py-12">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+            </div>
+
+            <div id="projectsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style="display: none;">
+                <!-- Los proyectos se cargarán dinámicamente aquí -->
+            </div>
+
+            <div id="emptyState" class="text-center py-12" style="display: none;">
+                <div class="text-6xl text-secondary-300 mb-4">
+                    <i class="fas fa-folder-open"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-secondary-900 mb-2">No hay proyectos</h3>
+                <p class="text-secondary-600 mb-6">No se encontraron proyectos con los filtros aplicados.</p>
+                <button class="btn btn-primary" id="createFirstProject">
+                    <i class="fas fa-plus mr-2"></i>
+                    Crear primer proyecto
+                </button>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination" class="mt-8 flex items-center justify-between">
+                <div class="text-sm text-secondary-600">
+                    Mostrando <span id="pageInfo">0</span> de <span id="totalProjects">0</span> proyectos
+                </div>
+                <div class="flex space-x-2">
+                    <button id="prevPage" class="btn btn-outline" disabled>
+                        <i class="fas fa-chevron-left mr-2"></i>
+                        Anterior
+                    </button>
+                    <button id="nextPage" class="btn btn-outline" disabled>
+                        Siguiente
+                        <i class="fas fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Card Template -->
+    <template id="projectCardTemplate">
+        <div class="card p-6 project-card" data-project-id="">
+            <div class="flex items-start justify-between mb-4">
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-secondary-900 project-name"></h3>
+                    <p class="text-sm text-secondary-600 project-client"></p>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="badge project-status"></span>
+                    <span class="badge project-priority"></span>
+                </div>
+            </div>
+
+            <p class="text-secondary-600 text-sm mb-4 project-description"></p>
+
+            <div class="space-y-3 mb-4">
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-secondary-500">Progreso</span>
+                    <span class="font-medium project-progress-text">0%</span>
+                </div>
+                <div class="w-full bg-secondary-200 rounded-full h-2">
+                    <div class="bg-primary-600 h-2 rounded-full project-progress-bar" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 text-sm mb-4">
+                <div>
+                    <span class="text-secondary-500">Presupuesto</span>
+                    <p class="font-medium project-budget">$0</p>
+                </div>
+                <div>
+                    <span class="text-secondary-500">Fecha límite</span>
+                    <p class="font-medium project-deadline">-</p>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-4 border-t border-secondary-200">
+                <div class="flex items-center space-x-2 text-sm text-secondary-500">
+                    <i class="fas fa-user"></i>
+                    <span class="project-responsible">Sin asignar</span>
+                </div>
+                <div class="flex space-x-2">
+                    <button class="btn btn-outline btn-sm view-project">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-primary btn-sm edit-project">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-secondary-200 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center text-secondary-500">
+                <p>&copy; 2025 ICTAM WebApp. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/js/auth.js"></script>
+    <script>
+        // Projects page functionality
+        class ProjectsPage {
+            constructor() {
+                this.authManager = new AuthManager();
+                this.currentPage = 1;
+                this.itemsPerPage = 9;
+                this.totalProjects = 0;
+                this.projects = [];
+                this.filters = {
+                    search: '',
+                    status: '',
+                    priority: ''
+                };
+                this.init();
+            }
+
+            async init() {
+                await this.authManager.init();
+                this.setupEventListeners();
+                this.loadProjects();
+            }
+
+            setupEventListeners() {
+                // Filtros
+                document.getElementById('searchInput').addEventListener('input', 
+                    this.debounce((e) => this.handleFilter('search', e.target.value), 300));
+                document.getElementById('statusFilter').addEventListener('change', 
+                    (e) => this.handleFilter('status', e.target.value));
+                document.getElementById('priorityFilter').addEventListener('change', 
+                    (e) => this.handleFilter('priority', e.target.value));
+                document.getElementById('clearFilters').addEventListener('click', 
+                    () => this.clearFilters());
+
+                // Paginación
+                document.getElementById('prevPage').addEventListener('click', 
+                    () => this.changePage(this.currentPage - 1));
+                document.getElementById('nextPage').addEventListener('click', 
+                    () => this.changePage(this.currentPage + 1));
+
+                // Botones
+                document.getElementById('newProjectBtn').addEventListener('click', 
+                    () => this.createProject());
+                document.getElementById('createFirstProject').addEventListener('click', 
+                    () => this.createProject());
+            }
+
+            async loadProjects() {
+                try {
+                    this.showLoading(true);
+                    
+                    const params = new URLSearchParams({
+                        page: this.currentPage,
+                        limit: this.itemsPerPage,
+                        ...this.filters
+                    });
+
+                    const response = await fetch(`/api/projects?${params}`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.authManager.token}`
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        this.projects = result.data;
+                        this.totalProjects = result.pagination.total;
+                        this.renderProjects();
+                        this.updatePagination(result.pagination);
+                    } else {
+                        this.showError('Error cargando proyectos: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    this.showError('Error conectando con el servidor');
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            renderProjects() {
+                const grid = document.getElementById('projectsGrid');
+                const emptyState = document.getElementById('emptyState');
+
+                if (this.projects.length === 0) {
+                    grid.style.display = 'none';
+                    emptyState.style.display = 'block';
+                    return;
+                }
+
+                grid.style.display = 'grid';
+                emptyState.style.display = 'none';
+                grid.innerHTML = '';
+
+                this.projects.forEach(project => {
+                    const card = this.createProjectCard(project);
+                    grid.appendChild(card);
+                });
+            }
+
+            createProjectCard(project) {
+                const template = document.getElementById('projectCardTemplate');
+                const card = template.content.cloneNode(true);
+
+                // Llenar datos
+                card.querySelector('.project-card').dataset.projectId = project.id;
+                card.querySelector('.project-name').textContent = project.nombre;
+                card.querySelector('.project-client').textContent = project.cliente_nombre || 'Cliente no asignado';
+                card.querySelector('.project-description').textContent = 
+                    project.descripcion || 'Sin descripción disponible';
+                
+                // Estado
+                const statusBadge = card.querySelector('.project-status');
+                statusBadge.textContent = this.getStatusText(project.estado);
+                statusBadge.className = `badge ${this.getStatusClass(project.estado)}`;
+
+                // Prioridad
+                const priorityBadge = card.querySelector('.project-priority');
+                priorityBadge.textContent = this.getPriorityText(project.prioridad);
+                priorityBadge.className = `badge ${this.getPriorityClass(project.prioridad)}`;
+
+                // Progreso
+                card.querySelector('.project-progress-text').textContent = `${project.progreso}%`;
+                card.querySelector('.project-progress-bar').style.width = `${project.progreso}%`;
+
+                // Presupuesto
+                card.querySelector('.project-budget').textContent = 
+                    project.presupuesto ? `$${project.presupuesto.toLocaleString()}` : 'No definido';
+
+                // Fecha límite
+                card.querySelector('.project-deadline').textContent = 
+                    project.fecha_fin_estimada ? new Date(project.fecha_fin_estimada).toLocaleDateString() : 'No definida';
+
+                // Responsable
+                card.querySelector('.project-responsible').textContent = 
+                    project.responsable_nombre || 'Sin asignar';
+
+                // Event listeners
+                card.querySelector('.view-project').addEventListener('click', 
+                    () => this.viewProject(project.id));
+                card.querySelector('.edit-project').addEventListener('click', 
+                    () => this.editProject(project.id));
+
+                return card;
+            }
+
+            // Utility methods
+            getStatusText(status) {
+                const statusMap = {
+                    'planificacion': 'Planificación',
+                    'en_proceso': 'En Proceso',
+                    'pausado': 'Pausado',
+                    'completado': 'Completado',
+                    'cancelado': 'Cancelado'
+                };
+                return statusMap[status] || status;
+            }
+
+            getStatusClass(status) {
+                const classMap = {
+                    'planificacion': 'badge-secondary',
+                    'en_proceso': 'badge-primary',
+                    'pausado': 'badge-warning',
+                    'completado': 'badge-success',
+                    'cancelado': 'badge-danger'
+                };
+                return classMap[status] || 'badge-secondary';
+            }
+
+            getPriorityText(priority) {
+                const priorityMap = {
+                    'baja': 'Baja',
+                    'media': 'Media',
+                    'alta': 'Alta',
+                    'urgente': 'Urgente'
+                };
+                return priorityMap[priority] || priority;
+            }
+
+            getPriorityClass(priority) {
+                const classMap = {
+                    'baja': 'badge-secondary',
+                    'media': 'badge-primary',
+                    'alta': 'badge-warning',
+                    'urgente': 'badge-danger'
+                };
+                return classMap[priority] || 'badge-secondary';
+            }
+
+            handleFilter(type, value) {
+                this.filters[type] = value;
+                this.currentPage = 1;
+                this.loadProjects();
+            }
+
+            clearFilters() {
+                this.filters = { search: '', status: '', priority: '' };
+                document.getElementById('searchInput').value = '';
+                document.getElementById('statusFilter').value = '';
+                document.getElementById('priorityFilter').value = '';
+                this.currentPage = 1;
+                this.loadProjects();
+            }
+
+            changePage(page) {
+                if (page < 1) return;
+                this.currentPage = page;
+                this.loadProjects();
+            }
+
+            updatePagination(pagination) {
+                document.getElementById('pageInfo').textContent = 
+                    `${(pagination.page - 1) * pagination.limit + 1}-${Math.min(pagination.page * pagination.limit, pagination.total)}`;
+                document.getElementById('totalProjects').textContent = pagination.total;
+
+                document.getElementById('prevPage').disabled = pagination.page <= 1;
+                document.getElementById('nextPage').disabled = pagination.page >= pagination.pages;
+            }
+
+            showLoading(show) {
+                document.getElementById('loadingSpinner').style.display = show ? 'flex' : 'none';
+            }
+
+            showError(message) {
+                // Simple alert por ahora, se puede mejorar con un toast
+                alert(message);
+            }
+
+            viewProject(projectId) {
+                window.location.href = `/projects/${projectId}`;
+            }
+
+            editProject(projectId) {
+                // Aquí se abriría un modal o redirigir a página de edición
+                console.log('Edit project:', projectId);
+            }
+
+            createProject() {
+                // Aquí se abriría un modal o redirigir a página de creación
+                console.log('Create new project');
+            }
+
+            debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+        }
+
+        // Inicializar la página cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', () => {
+            new ProjectsPage();
+        });
+    </script>
+</body>
+</html>

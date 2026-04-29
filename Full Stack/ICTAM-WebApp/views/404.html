@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página no encontrada - ICTAM WebApp</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="navbar fixed top-0 w-full z-50">
+        <div class="nav-container flex items-center justify-between h-16">
+            <div class="nav-logo">
+                <a href="/" class="flex items-center space-x-2">
+                    <h2 class="text-2xl font-bold text-primary-600">ICTAM</h2>
+                    <span class="text-sm text-secondary-500">WebApp</span>
+                </a>
+            </div>
+            <div class="nav-menu">
+                <a href="/" class="nav-link">Inicio</a>
+                <a href="/#servicios" class="nav-link">Servicios</a>
+                <a href="/#nosotros" class="nav-link">Nosotros</a>
+                <a href="/login" class="nav-link">Iniciar Sesión</a>
+                <a href="/dashboard" class="btn btn-primary">Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 404 Content -->
+    <div class="min-h-screen flex items-center justify-center px-4 pt-16">
+        <div class="max-w-md w-full text-center">
+            <div class="mb-8">
+                <div class="text-9xl font-bold text-primary-600 mb-4">404</div>
+                <div class="text-6xl mb-6">
+                    <i class="fas fa-exclamation-triangle text-yellow-500"></i>
+                </div>
+            </div>
+            
+            <h1 class="text-3xl font-bold text-secondary-900 mb-4">
+                Página no encontrada
+            </h1>
+            
+            <p class="text-lg text-secondary-600 mb-8">
+                Lo sentimos, la página que buscas no existe o ha sido movida.
+            </p>
+            
+            <div class="space-y-4">
+                <a href="/" class="btn btn-primary w-full py-3">
+                    <i class="fas fa-home mr-2"></i>
+                    Volver al inicio
+                </a>
+                
+                <a href="/dashboard" class="btn btn-outline w-full py-3">
+                    <i class="fas fa-tachometer-alt mr-2"></i>
+                    Ir al Dashboard
+                </a>
+                
+                <button onclick="history.back()" class="btn btn-secondary w-full py-3">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Página anterior
+                </button>
+            </div>
+            
+            <div class="mt-12 text-sm text-secondary-500">
+                <p>Si crees que esto es un error, por favor contacta a nuestro equipo de soporte.</p>
+                <p class="mt-2">
+                    <a href="mailto:soporte@ictam.com" class="text-primary-600 hover:text-primary-700">
+                        soporte@ictam.com
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-secondary-200 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center text-secondary-500">
+                <p>&copy; 2025 ICTAM WebApp. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Auto redirect after 10 seconds
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 10000);
+
+        // Countdown display
+        let countdown = 10;
+        const countdownElement = document.createElement('div');
+        countdownElement.className = 'fixed bottom-4 right-4 bg-primary-600 text-white px-4 py-2 rounded-lg shadow-lg';
+        countdownElement.innerHTML = `Redirigiendo en <span id="countdown">${countdown}</span>s`;
+        document.body.appendChild(countdownElement);
+
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            document.getElementById('countdown').textContent = countdown;
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
