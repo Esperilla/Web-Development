@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Environment variables (Sensitive data)
+.env*
+!.env.example
+
+# User uploads (Dynamic content, keep folder structure)
+uploads/*
+!uploads/.gitkeep
+
+# Build outputs (Tailwind CSS)
+public/css/style.css
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
